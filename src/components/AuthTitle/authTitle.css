@@ -1,0 +1,35 @@
+.auth-title-containner {
+  padding: 20px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: start;
+  width: 100%;
+  box-sizing: border-box;
+}
+.greet-title {
+  color: #9b9fae;
+  margin: 0;
+}
+.auth-title {
+  font-weight: 600;
+  color: white;
+  font-size: 40px;
+}
+.redirect-title {
+  color: #c7c8cba1;
+  margin: 0;
+  padding: 5px 0;
+}
+.auth-redirect {
+  text-decoration: none;
+  color: #00ff38;
+}
+@keyframes fadeBlink {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}

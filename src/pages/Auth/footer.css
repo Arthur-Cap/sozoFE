@@ -1,0 +1,9 @@
+.auth-footer {
+  background: linear-gradient(to right, #000000, #000000bb,#0000004b, #00000005);
+  width: 100%;
+  padding: 0 10%;
+  box-sizing: border-box;
+  height: 60px;
+  color: rgb(148, 148, 148);
+  font-size: 13px;
+}

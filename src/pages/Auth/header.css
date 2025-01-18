@@ -1,0 +1,20 @@
+.auth-header {
+  display: flex;
+  padding: 0 10%;
+  justify-content: start;
+  align-items: end;
+  width: 100%;
+  height: 150px;
+  background: linear-gradient(to right, #000000, #000000bb,#0000004b, #00000005);
+  box-sizing: border-box;
+}
+
+.auth-logo {
+  background-image: url("../../../src/assets/image-removebg.png");
+  width: 80px;
+  height: 50px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  font-weight: 200;
+}
