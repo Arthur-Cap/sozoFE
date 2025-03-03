@@ -29,7 +29,7 @@ const Body: React.FC = () => {
       <TextInput
         title="Password"
         typeInput="password"
-        setState={setEmail}
+        setState={setPassword}
         height={"70px"}
         width={"clamp(50px, 100%, 500px)"}
         backgroundColor="rgba(240, 248, 255, 0.166)"
