@@ -1,6 +1,5 @@
 import React from "react";
 import "./New3D.css";
-import { CircleChevronRight, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 const New3D: React.FC = () => {
   const navigate = useNavigate();

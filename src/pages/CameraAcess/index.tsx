@@ -10,7 +10,7 @@ const CameraAccess: React.FC = () => {
   const [videoURL, setVideoURL] = useState<string | null>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [recordTime, setRecordTime] = useState(0);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<number | null>(null);
 
   useEffect(() => {
     const storedVideo = localStorage.getItem("savedVideo");
