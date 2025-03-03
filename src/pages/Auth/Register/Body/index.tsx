@@ -5,9 +5,11 @@ import TextInput from "../../../../components/TextInput";
 import Button from "../../../../components/Button";
 
 const Body: React.FC = () => {
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
+  console.log(email);
+  console.log(password); 
   return (
     <div className="auth-body">
       <AuthTitle
