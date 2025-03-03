@@ -1,5 +1,5 @@
 import React from "react";
-import "./Dashboard.css";
+import "./dashboard.css";
 import WorkingTask from "./WorkingTask";
 import TaskHistory from "./TaskHistory";
 import New3D from "./New3D";
