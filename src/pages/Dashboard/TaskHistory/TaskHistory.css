@@ -1,0 +1,6 @@
+.task-img-preview{
+  background-image: url(../../../assets/temptTask.jpg);
+  /* background-color: black; */
+  background-position: center;
+  background-size: cover;
+}

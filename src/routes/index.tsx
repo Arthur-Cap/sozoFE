@@ -7,6 +7,8 @@ import {
 
 import LoginPage from "../pages/Auth/Login";
 import RegisterPage from "../pages/Auth/Register";
+import Dashboard from "../pages/Dashboard";
+import CameraAcess from "../pages/CameraAcess";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -14,6 +16,8 @@ const AppRoutes: React.FC = () => {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage/>} />
+        <Route path="/dashboard" element={<Dashboard/>} />
+        <Route path="/camera" element={<CameraAcess/>} />
       </Routes>
     </Router>
   );

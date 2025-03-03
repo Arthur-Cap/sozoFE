@@ -38,7 +38,7 @@ const Body: React.FC = () => {
         title="Login"
         color="black"
         iconName=""
-        height="60px"
+        height="65px"
         width="clamp(50px, 100%, 500px)"
         backgroundColor="#00ff38"
         borderRadius={5}
