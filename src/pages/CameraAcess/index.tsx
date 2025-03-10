@@ -1,154 +1,269 @@
-import React, { useRef, useState, useEffect } from "react";
-import { Camera, StopCircle, RefreshCcw, Upload } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { Camera, StopCircle, RefreshCcw, Upload, Send } from "lucide-react";
+import { useReactMediaRecorder } from "react-media-recorder";
+import JSZip from "jszip";
+
+enum ProgressState {
+  EXTRACTING_FRAMES = "Trích xuất ảnh",
+  PREPARING_DATA = "Xử lý dữ liệu",
+}
 
 const CameraAccess: React.FC = () => {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const recordedChunks = useRef<Blob[]>([]);
-
-  const [recording, setRecording] = useState(false);
-  const [videoURL, setVideoURL] = useState<string | null>(null);
-  const [stream, setStream] = useState<MediaStream | null>(null);
   const [recordTime, setRecordTime] = useState(0);
-  const timerRef = useRef<number | null>(null);
+  const [timer, setTimer] = useState<number | null>(null);
+  const [videoURL, setVideoURL] = useState<string | null>(
+    localStorage.getItem("savedVideo") || null
+  );
+  const [stream, setStream] = useState<MediaStream | null>(null);
+  const [progress, setProgress] = useState(0);
+  const [progressName, setProgressName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { startRecording, stopRecording, mediaBlobUrl, status } =
+    useReactMediaRecorder({
+      video: true,
+      audio: true,
+    });
 
   useEffect(() => {
-    const storedVideo = localStorage.getItem("savedVideo");
-    if (storedVideo) {
-      setVideoURL(storedVideo);
-    }
-    return () => stopStream();
-  }, []);
-
-  const startCamera = async () => {
-    try {
-      stopStream();
-      const userStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user" },
-        audio: true,
-      });
-      setStream(userStream);
-      if (videoRef.current) {
-        videoRef.current.srcObject = userStream;
-      }
-    } catch (error) {
-      console.error("Error accessing camera:", error);
-    }
-  };
-
-  const startRecording = () => {
-    if (!stream) return;
-    recordedChunks.current = [];
-    setRecordTime(0);
-    timerRef.current = setInterval(() => setRecordTime((prev) => prev + 1), 1000);
-
-    const recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
-
-    recorder.ondataavailable = (event) => {
-      if (event.data.size > 0) {
-        recordedChunks.current.push(event.data);
+    const initCamera = async () => {
+      if (!videoURL) {
+        try {
+          const mediaStream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: true,
+          });
+          setStream(mediaStream);
+          if (videoRef.current) {
+            videoRef.current.srcObject = mediaStream;
+          }
+        } catch (error) {
+          console.error("Camera access denied:", error);
+        }
       }
     };
 
-    recorder.onstop = () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-      const blob = new Blob(recordedChunks.current, { type: "video/webm" });
-      const url = URL.createObjectURL(blob);
-      setVideoURL(url);
-      localStorage.setItem("savedVideo", url);
+    initCamera();
+
+    return () => {
+      stream?.getTracks().forEach((track) => track.stop());
     };
+  }, [videoURL]);
 
-    recorder.start();
-    mediaRecorderRef.current = recorder;
-    setRecording(true);
-  };
-
-  const stopRecording = () => {
-    if (mediaRecorderRef.current) {
-      mediaRecorderRef.current.stop();
+  useEffect(() => {
+    if (status === "recording") {
+      setRecordTime(0);
+      const interval = window.setInterval(() => {
+        setRecordTime((prev) => prev + 1);
+      }, 1000);
+      setTimer(interval);
+    } else if (status === "stopped") {
+      if (timer) {
+        clearInterval(timer);
+        setTimer(null);
+      }
+      if (mediaBlobUrl) {
+        setVideoURL(mediaBlobUrl);
+        localStorage.setItem("savedVideo", mediaBlobUrl);
+      }
     }
-    setRecording(false);
-  };
+  }, [status, mediaBlobUrl]);
 
-  const stopStream = () => {
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
-      setStream(null);
+  const handleStartRecording = async () => {
+    if (!stream) {
+      try {
+        const mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+        setStream(mediaStream);
+        if (videoRef.current) {
+          videoRef.current.srcObject = mediaStream;
+        }
+      } catch (error) {
+        console.error("Camera access denied:", error);
+        return;
+      }
     }
+    startRecording();
   };
 
   const resetRecording = () => {
     setVideoURL(null);
     localStorage.removeItem("savedVideo");
-    startCamera();
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setVideoURL(url);
+      localStorage.setItem("savedVideo", url);
+
+      if (videoRef.current) {
+        videoRef.current.src = url;
+      }
+    }
+  };
+
+  const extractFrames = async (videoUrl: string) => {
+    return new Promise<HTMLCanvasElement[]>((resolve) => {
+      const video = document.createElement("video");
+      video.src = videoUrl;
+      video.crossOrigin = "anonymous";
+      video.muted = true;
+      video.playsInline = true;
+      video.currentTime = 0;
+
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      const frames: HTMLCanvasElement[] = [];
+
+      video.addEventListener("loadeddata", () => {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        const captureFrame = () => {
+          if (frames.length < 200) {
+            ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const frame = document.createElement("canvas");
+            frame.width = canvas.width;
+            frame.height = canvas.height;
+            frame.getContext("2d")?.drawImage(canvas, 0, 0);
+            frames.push(frame);
+            video.currentTime += video.duration / 200;
+            setProgress(Math.round((frames.length / 200) * 100));
+            setProgressName(ProgressState.EXTRACTING_FRAMES);
+          } else {
+            resolve(frames);
+          }
+        };
+
+        video.addEventListener("seeked", captureFrame);
+        captureFrame();
+      });
+
+      video.play();
+    });
+  };
+
+  const handleUpload = async () => {
+    if (!videoURL) return;
+    setIsLoading(true);
+    setProgress(0);
+    try {
+      const frames = await extractFrames(videoURL);
+      const zip = new JSZip();
+
+      for (let i = 0; i < frames.length; i++) {
+        const blob = await new Promise<Blob>((resolve) =>
+          frames[i].toBlob((b) => resolve(b as Blob), "image/jpeg")
+        );
+        zip.file(`frame_${i + 1}.jpg`, blob);
+      }
+
+      setProgressName(ProgressState.PREPARING_DATA);
+      const zipBlob = await zip.generateAsync(
+        { type: "blob" },
+        (metadata) => setProgress(Math.round(metadata.percent))
+      );
+
+      const url = URL.createObjectURL(zipBlob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "frames.zip";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      alert("Download successful!");
+    } catch (error) {
+      console.error("Download failed:", error);
+      alert("Download failed!");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="relative w-full h-screen bg-black">
-      {!videoURL ? (
+      {videoURL ? (
+        <div>
+        <video
+          src={videoURL}
+          autoPlay
+          muted
+          loop
+          playsInline
+          controls
+          className="absolute top-0 left-0 w-full h-full object-cover"
+        /></div>
+      ) : (
         <video
           ref={videoRef}
           autoPlay
           playsInline
-          className="absolute top-0 left-0 w-full h-full object-cover"
-        />
-      ) : (
-        <video
-          src={videoURL}
-          controls
+          muted
           className="absolute top-0 left-0 w-full h-full object-cover"
         />
       )}
 
-      {recording && (
+      {status === "recording" && (
         <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-black text-white py-1 px-4 rounded-lg text-lg">
           {recordTime}s
         </div>
       )}
 
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-6">
-        {!videoURL ? (
-          recording ? (
-            <button
-              onClick={stopRecording}
-              className="bg-black p-4 rounded-full shadow-lg hover:bg-gray-800 transition"
-            >
-              <StopCircle className="w-8 h-8 text-white" />
-            </button>
-          ) : (
-            <button
-              onClick={startRecording}
-              className="bg-black p-4 rounded-full shadow-lg hover:bg-gray-800 transition"
-            >
-              <Camera className="w-8 h-8 text-white" />
-            </button>
-          )
-        ) : (
-          <>
-            <button
-              onClick={resetRecording}
-              className="bg-black p-4 rounded-full shadow-lg hover:bg-gray-800 transition"
-            >
-              <RefreshCcw className="w-8 h-8 text-white" />
-            </button>
-            <button
-              onClick={() => console.log("Uploading video...")}
-              className="bg-black p-4 rounded-full shadow-lg hover:bg-gray-800 transition"
-            >
-              <Upload className="w-8 h-8 text-white" />
-            </button>
-          </>
-        )}
-      </div>
+      {isLoading && (
+        <div className="absolute top-4 right-4 bg-black text-white py-1 px-4 rounded-lg text-lg">
+          {progressName} {progress}%
+        </div>
+      )}
 
-      {!stream && !videoURL && (
+      {videoURL && !isLoading && (
         <button
-          onClick={startCamera}
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-black p-4 rounded-full shadow-lg hover:bg-gray-800 transition"
+          onClick={handleUpload}
+          className="absolute top-4 right-4 bg-blue-500 p-3 rounded-full shadow-lg hover:bg-blue-700 transition"
         >
-          <Camera className="w-8 h-8 text-white" />
+          <Send className="w-6 h-6 text-white" />
         </button>
       )}
+
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-6">
+        {!videoURL ? (
+          <>
+            {status === "recording" ? (
+              <button onClick={stopRecording}>
+                <StopCircle className="w-8 h-8 text-white" />
+              </button>
+            ) : (
+              <>
+                <button onClick={handleStartRecording}>
+                  <Camera className="w-8 h-8 text-white" />
+                </button>
+                <button onClick={() => fileInputRef.current?.click()}>
+                  <Upload className="w-8 h-8 text-white" />
+                </button>
+                <input
+                  type="file"
+                  accept="video/*"
+                  ref={fileInputRef}
+                  onChange={handleFileUpload}
+                  hidden
+                />
+              </>
+            )}
+          </>
+        ) : (
+          <button onClick={resetRecording}>
+            <RefreshCcw className="w-8 h-8 text-white" />
+          </button>
+        )}
+      </div>
     </div>
   );
 };

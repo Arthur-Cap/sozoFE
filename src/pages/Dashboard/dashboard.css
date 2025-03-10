@@ -7,7 +7,6 @@
     "create-new-task service-info guide get-help";
   gap: 15px; 
   padding: 100px 120px;
-
 }
 
 @media (max-width: 1100px) {
@@ -16,20 +15,21 @@
   }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 700px), (min-height: calc(0.9 * 100vw)) {
   .dashboard {
     display: grid;
-    padding : 60px 15px;
-    grid-template-columns: 1fr 1fr ;
+    padding-left: calc(30% - (30% * (1200px - 100vw) / (1200px - 700px)));
+    padding-right: calc(30% - (30% * (1200px - 100vw) / (1200px - 700px)));
+    padding: 60px 15px;
+    grid-template-columns: 1fr 1fr;
     grid-template-rows: 3fr 2fr 3fr 2fr;
     grid-template-areas:
-     "working-task working-task"
-    "create-new-task  service-info"
-     "task-history task-history"
-     "get-help guide"
-     ;
-
+      "working-task working-task"
+      "create-new-task service-info"
+      "task-history task-history"
+      "get-help guide";
   }
+  
 }
 
 .working-task {
