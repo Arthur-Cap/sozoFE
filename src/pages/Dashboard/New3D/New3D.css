@@ -1,6 +1,19 @@
-.icon{
-  background-image: url(../../../assets/new3d.jpg);
+.icon {
+  background-image: url(../../../assets/new3d.png);
   /* background-color: black; */
-  background-size: cover;
-  background-position: center;
+  background-size: 375px auto;
+  background-position: bottom right;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.rotating-circle {
+  animation: rotate 15s linear infinite;
 }

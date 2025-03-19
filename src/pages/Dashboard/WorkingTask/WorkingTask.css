@@ -4,3 +4,39 @@
   background-position: center;
   background-size: cover;
 }
+
+.barcode-wrapper {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 10px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.barcode {
+  display: flex;
+  height: 100%;
+  animation: scroll 10s linear infinite;
+}
+
+.barcode div {
+  height: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+  margin-right: 10px;
+}
+
+.barcode div:nth-child(1n) { width: 1px; }
+.barcode div:nth-child(2n) { width: 2px; }
+.barcode div:nth-child(3n) { width: 1px; }
+.barcode div:nth-child(4n) { width: 1px; }
+.barcode div:nth-child(5n) { width: 2px; height: 120% }
+
+@keyframes scroll {
+  from {
+    transform: translateX(-30%);
+  }
+  to {
+    transform: translateX(0%);
+  }
+}

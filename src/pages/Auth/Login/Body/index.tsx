@@ -3,12 +3,23 @@ import "../../body.css";
 import AuthTitle from "../../../../components/AuthTitle";
 import TextInput from "../../../../components/TextInput";
 import Button from "../../../../components/Button";
+import { useLogin } from "../../../../hooks/useAuth";
 
 const Body: React.FC = () => {
-  const [email, setEmail] = useState("");
+  const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
-  console.log(email);
-  console.log(password);
+  
+  const loginMutation = useLogin();
+
+  const handleLogin = () => {
+    if (!userName || !password) {
+      alert("Please fill in both email and password.");
+      return;
+    }
+    
+    loginMutation.mutate({ userName, password });
+  };
+
   return (
     <div className="auth-body">
       <AuthTitle
@@ -18,14 +29,14 @@ const Body: React.FC = () => {
         linkString="/register"
       />
       <TextInput
-        title="Email"
+        title="User name"
         typeInput="text"
-        setState={setEmail}
+        setState={setUserName}
         height={"70px"}
         width={"clamp(50px, 100%, 500px)"}
         backgroundColor="rgba(240, 248, 255, 0.166)"
         borderRadius={6}
-      ></TextInput>
+      />
       <TextInput
         title="Password"
         typeInput="password"
@@ -34,7 +45,7 @@ const Body: React.FC = () => {
         width={"clamp(50px, 100%, 500px)"}
         backgroundColor="rgba(240, 248, 255, 0.166)"
         borderRadius={6}
-      ></TextInput>
+      />
       <Button
         title="Login"
         color="black"
@@ -45,7 +56,7 @@ const Body: React.FC = () => {
         borderRadius={5}
         fontSize="15px"
         fontWeight="bold"
-        onClick={() => {}}
+        onClick={handleLogin}
       />
     </div>
   );

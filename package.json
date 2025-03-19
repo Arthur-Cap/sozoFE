@@ -18,6 +18,8 @@
     "@heroicons/react": "^2.2.0",
     "@mui/material": "^6.4.2",
     "@tailwindcss/vite": "^4.0.3",
+    "@tanstack/react-query": "^5.69.0",
+    "axios": "^1.8.4",
     "ionicons": "^7.4.0",
     "jszip": "^3.10.1",
     "lucide": "^0.475.0",

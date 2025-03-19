@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { Camera, StopCircle, RefreshCcw, Upload, Send } from "lucide-react";
 import { useReactMediaRecorder } from "react-media-recorder";
 import JSZip from "jszip";
+import { useNavigate } from "react-router-dom";
+import { useTaskGenerate } from "../../hooks/useTaskGenerate";
 
 enum ProgressState {
   EXTRACTING_FRAMES = "Trích xuất ảnh",
@@ -11,9 +13,7 @@ enum ProgressState {
 const CameraAccess: React.FC = () => {
   const [recordTime, setRecordTime] = useState(0);
   const [timer, setTimer] = useState<number | null>(null);
-  const [videoURL, setVideoURL] = useState<string | null>(
-    localStorage.getItem("savedVideo") || null
-  );
+  const [videoURL, setVideoURL] = useState<string | null>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [progress, setProgress] = useState(0);
   const [progressName, setProgressName] = useState("");
@@ -28,21 +28,24 @@ const CameraAccess: React.FC = () => {
       audio: true,
     });
 
+  const navigate = useNavigate();
+  const taskGenerateMutation = useTaskGenerate();
+
   useEffect(() => {
+    localStorage.removeItem("savedVideo");
+
     const initCamera = async () => {
-      if (!videoURL) {
-        try {
-          const mediaStream = await navigator.mediaDevices.getUserMedia({
-            video: true,
-            audio: true,
-          });
-          setStream(mediaStream);
-          if (videoRef.current) {
-            videoRef.current.srcObject = mediaStream;
-          }
-        } catch (error) {
-          console.error("Camera access denied:", error);
+      try {
+        const mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+        setStream(mediaStream);
+        if (videoRef.current) {
+          videoRef.current.srcObject = mediaStream;
         }
+      } catch (error) {
+        console.error("Camera access denied:", error);
       }
     };
 
@@ -127,15 +130,15 @@ const CameraAccess: React.FC = () => {
         canvas.height = video.videoHeight;
 
         const captureFrame = () => {
-          if (frames.length < 200) {
+          if (frames.length < 60) {
             ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
             const frame = document.createElement("canvas");
             frame.width = canvas.width;
             frame.height = canvas.height;
             frame.getContext("2d")?.drawImage(canvas, 0, 0);
             frames.push(frame);
-            video.currentTime += video.duration / 200;
-            setProgress(Math.round((frames.length / 200) * 100));
+            video.currentTime += video.duration / 60;
+            setProgress(Math.round((frames.length / 60) * 100));
             setProgressName(ProgressState.EXTRACTING_FRAMES);
           } else {
             resolve(frames);
@@ -166,24 +169,14 @@ const CameraAccess: React.FC = () => {
       }
 
       setProgressName(ProgressState.PREPARING_DATA);
-      const zipBlob = await zip.generateAsync(
-        { type: "blob" },
-        (metadata) => setProgress(Math.round(metadata.percent))
+      const zipBlob = await zip.generateAsync({ type: "blob" }, (metadata) =>
+        setProgress(Math.round(metadata.percent))
       );
 
-      const url = URL.createObjectURL(zipBlob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "frames.zip";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-
-      alert("Download successful!");
+      taskGenerateMutation.mutate(zipBlob);
     } catch (error) {
-      console.error("Download failed:", error);
-      alert("Download failed!");
+      console.error("Failed to prepare file:", error);
+      alert("Failed to prepare file! Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -193,15 +186,16 @@ const CameraAccess: React.FC = () => {
     <div className="relative w-full h-screen bg-black">
       {videoURL ? (
         <div>
-        <video
-          src={videoURL}
-          autoPlay
-          muted
-          loop
-          playsInline
-          controls
-          className="absolute top-0 left-0 w-full h-full object-cover"
-        /></div>
+          <video
+            src={videoURL}
+            autoPlay
+            muted
+            loop
+            playsInline
+            controls
+            className="absolute top-0 left-0 w-full h-full object-cover"
+          />
+        </div>
       ) : (
         <video
           ref={videoRef}
