@@ -28,7 +28,6 @@ const CameraAccess: React.FC = () => {
       audio: true,
     });
 
-  const navigate = useNavigate();
   const taskGenerateMutation = useTaskGenerate();
 
   useEffect(() => {

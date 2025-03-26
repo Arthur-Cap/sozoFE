@@ -30,7 +30,7 @@ export const useLogin = () => {
     },
     onError: (error) => {
       console.log(error);
-      alert(error.response?.data?.message || "Login failed");
+      alert(error || "Login failed");
     },
   });
 };

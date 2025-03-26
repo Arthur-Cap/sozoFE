@@ -30,7 +30,7 @@ export const useTaskGenerate = () => {
 
   return useMutation({
     mutationFn: generateTask,
-    onSuccess: (data) => {
+    onSuccess: () => {
       alert("Upload successful!");
       navigate("/");
     },
