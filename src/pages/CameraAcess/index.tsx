@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { Camera, StopCircle, RefreshCcw, Upload, Send } from "lucide-react";
 import { useReactMediaRecorder } from "react-media-recorder";
 import JSZip from "jszip";
-import { useNavigate } from "react-router-dom";
 import { useTaskGenerate } from "../../hooks/useTaskGenerate";
 
 enum ProgressState {
