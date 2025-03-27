@@ -3,6 +3,7 @@ import { Camera, StopCircle, RefreshCcw, Upload, Send } from "lucide-react";
 import { useReactMediaRecorder } from "react-media-recorder";
 import JSZip from "jszip";
 import { useTaskGenerate } from "../../hooks/useTaskGenerate";
+import TextInputPopup from "../../components/TextInputPopup";
 
 enum ProgressState {
   EXTRACTING_FRAMES = "Trích xuất ảnh",
@@ -17,6 +18,7 @@ const CameraAccess: React.FC = () => {
   const [progress, setProgress] = useState(0);
   const [progressName, setProgressName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showNameModal, setShowNameModal] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -153,12 +155,27 @@ const CameraAccess: React.FC = () => {
 
   const handleUpload = async () => {
     if (!videoURL) return;
+    setShowNameModal(true);
+  };
+
+  const handleNameConfirm = async (taskName: string) => {
+    if (!videoURL) return;
+
+    setShowNameModal(false);
     setIsLoading(true);
     setProgress(0);
     try {
       const frames = await extractFrames(videoURL);
       const zip = new JSZip();
 
+      // Get the middle frame for display
+      const middleFrameIndex = Math.floor(frames.length / 2);
+      const displayFrame = frames[middleFrameIndex];
+      const displayBlob = await new Promise<Blob>((resolve) =>
+        displayFrame.toBlob((b) => resolve(b as Blob), "image/jpeg")
+      );
+
+      // Add all frames to zip
       for (let i = 0; i < frames.length; i++) {
         const blob = await new Promise<Blob>((resolve) =>
           frames[i].toBlob((b) => resolve(b as Blob), "image/jpeg")
@@ -171,7 +188,13 @@ const CameraAccess: React.FC = () => {
         setProgress(Math.round(metadata.percent))
       );
 
-      taskGenerateMutation.mutate(zipBlob);
+      // Create FormData and append all data
+      const formData = new FormData();
+      formData.append("zipFile", zipBlob, "frames.zip");
+      formData.append("displayImg", displayBlob, "display.jpg");
+      formData.append("taskName", taskName);
+
+      taskGenerateMutation.mutate(formData);
     } catch (error) {
       console.error("Failed to prepare file:", error);
       alert("Failed to prepare file! Please try again.");
@@ -256,6 +279,14 @@ const CameraAccess: React.FC = () => {
           </button>
         )}
       </div>
+
+      <TextInputPopup
+        isOpen={showNameModal}
+        onClose={() => setShowNameModal(false)}
+        onConfirm={handleNameConfirm}
+        title="Nhập tên gợi nhớ"
+        placeholder="Nhập tên gợi nhớ..."
+      />
     </div>
   );
 };
