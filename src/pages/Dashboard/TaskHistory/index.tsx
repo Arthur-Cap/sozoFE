@@ -3,13 +3,17 @@ import "./TaskHistory.css";
 import { CircleChevronRight } from "lucide-react";
 import TaskItem from "./component/TaskItem";
 import { useTasks } from "../../../hooks/useTaskGenerate";
+import { useNavigate } from 'react-router-dom';
 
 const TaskHistory: React.FC = () => {
   const { data: tasks, isLoading, isError } = useTasks(0,5);
 
+  const navigate = useNavigate();
+
   const handleItemClick = (taskId: number) => {
-    console.log(`Navigate to task ${taskId}`);
+    navigate(`/view-3d/${taskId}`);
   };
+
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Failed to load tasks</div>;
@@ -17,7 +21,7 @@ const TaskHistory: React.FC = () => {
   return (
     <div
       className="task-history flex items-start font-bold text-md rounded-lg h-full 
-    bg-white shadow-sm 
+    bg-white shadow-lg 
     flex-col justify-start p-[21px]"
     >
       <div className="flex w-full border-b border-[#4242422e] p-1 justify-between items-center">

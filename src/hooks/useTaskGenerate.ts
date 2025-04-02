@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axiosInstance from "../api/axiosInstance";
+import axiosInstance from "../connection/api/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
 
@@ -35,17 +35,16 @@ const generateTask = async (
   return response.data;
 };
 
-const fetchTasks = async (
-  page: number,
-  limit: number
-): Promise<Task[]> => {
-  const response = await axiosInstance.get<TaskListResponse>("/task/generate/3D", {
-    params: {
-      page,
-      limit,
-    },
-  });
-  console.log(response.data)
+const fetchTasks = async (page: number, limit: number): Promise<Task[]> => {
+  const response = await axiosInstance.get<TaskListResponse>(
+    "/task/generate/3D",
+    {
+      params: {
+        page,
+        limit,
+      },
+    }
+  );
   return response.data.content;
 };
 
@@ -60,17 +59,19 @@ export const useTaskGenerate = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  return useMutation<TaskGenerateResponse, AxiosError<ErrorResponse>, FormData>({
-    mutationFn: generateTask,
-    onSuccess: () => {
-      alert("Upload successful!");
-      navigate("/");
-      queryClient.invalidateQueries({ queryKey: ["tasks"] });
-    },
-    onError: (error) => {
-      alert(
-        error.response?.data?.message || "Upload failed! Please try again."
-      );
-    },
-  });
+  return useMutation<TaskGenerateResponse, AxiosError<ErrorResponse>, FormData>(
+    {
+      mutationFn: generateTask,
+      onSuccess: () => {
+        alert("Upload successful!");
+        navigate("/");
+        queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      },
+      onError: (error) => {
+        alert(
+          error.response?.data?.message || "Upload failed! Please try again."
+        );
+      },
+    }
+  );
 };

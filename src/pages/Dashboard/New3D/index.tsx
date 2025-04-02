@@ -9,7 +9,7 @@ const New3D: React.FC = () => {
     <div
       onClick={() => navigate("/camera")}
       className="new-3d items-center icon cursor-pointer flex gap-4 sm:items-start min-h-[142px] md:items-center lg:items-start relative ov font-bold text-md rounded-lg h-full 
-    bg-white via-[#dbeafe] to-white shadow-md 
+    bg-white via-[#dbeafe] to-white shadow-lg 
     flex-col p-3 lg:p-[21px]"
     >
       <span className="text-white hidden sm:flex font-light lg:flex text-xs items-center md:hidden relative left-[-4px]">

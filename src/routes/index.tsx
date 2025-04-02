@@ -7,6 +7,7 @@ import Dashboard from "../pages/Dashboard";
 import CameraAcess from "../pages/CameraAcess";
 import ProtectedRoute from "./ProtectedRoute";
 import PublicRoute from "./PublicRoute";
+import View3dObject from "../pages/View3dObject";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -50,6 +51,14 @@ const AppRoutes: React.FC = () => {
           element={
             <ProtectedRoute>
               <CameraAcess />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/view-3d/:id"
+          element={
+            <ProtectedRoute>
+              <View3dObject />
             </ProtectedRoute>
           }
         />

@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import axiosInstance from "../api/axiosInstance";
+import axiosInstance from "../connection/api/axiosInstance";
 import { useNavigate } from "react-router-dom";
 
 interface LoginPayload {
@@ -25,7 +25,6 @@ export const useLogin = () => {
     onSuccess: (data) => {
       localStorage.setItem("authToken", data.token);
       localStorage.setItem("tokenExpiresIn", data.expiresIn.toString());
-      alert("Login successful!");
       navigate("/");
     },
     onError: (error) => {
