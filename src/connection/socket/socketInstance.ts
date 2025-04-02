@@ -7,7 +7,7 @@ export const createSocketInstance = () => {
     return null;
   }
 
-  const url = `ws://14.225.253.196:8081/ws/task?token=${token}`;
+  const url = `wss://14.225.253.196:8443/ws/task?token=${token}`;
   socket = new WebSocket(url);
 
   return socket;
