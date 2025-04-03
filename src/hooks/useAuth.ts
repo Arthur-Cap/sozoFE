@@ -1,15 +1,14 @@
 import { useMutation } from "@tanstack/react-query";
 import axiosInstance from "../connection/api/axiosInstance";
-import { useNavigate } from "react-router-dom";
 
 interface LoginPayload {
-  userName: string; // Changed from email to userName
+  userName: string;
   password: string;
 }
 
 interface LoginResponse {
   token: string;
-  expiresIn: number; // Added to match backend response
+  expiresIn: number;
 }
 
 const loginUser = async (payload: LoginPayload): Promise<LoginResponse> => {
@@ -18,18 +17,7 @@ const loginUser = async (payload: LoginPayload): Promise<LoginResponse> => {
 };
 
 export const useLogin = () => {
-  const navigate = useNavigate();
-
-  return useMutation({
+  return useMutation<LoginResponse, Error, LoginPayload>({
     mutationFn: loginUser,
-    onSuccess: (data) => {
-      localStorage.setItem("authToken", data.token);
-      localStorage.setItem("tokenExpiresIn", data.expiresIn.toString());
-      navigate("/");
-    },
-    onError: (error) => {
-      console.log(error);
-      alert(error || "Login failed");
-    },
   });
 };

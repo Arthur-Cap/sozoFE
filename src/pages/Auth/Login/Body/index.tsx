@@ -4,20 +4,35 @@ import AuthTitle from "../../../../components/AuthTitle";
 import TextInput from "../../../../components/TextInput";
 import Button from "../../../../components/Button";
 import { useLogin } from "../../../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const Body: React.FC = () => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
-  
+
   const loginMutation = useLogin();
+  const navigate = useNavigate();
 
   const handleLogin = () => {
     if (!userName || !password) {
       alert("Please fill in both email and password.");
       return;
     }
-    
-    loginMutation.mutate({ userName, password });
+
+    loginMutation.mutate(
+      { userName, password },
+      {
+        onSuccess: (data) => {
+          localStorage.setItem("authToken", data.token);
+          localStorage.setItem("tokenExpiresIn", data.expiresIn.toString());
+          navigate("/");
+        },
+        onError: (error) => {
+          console.error("Login error:", error);
+          alert(error?.message || "Login failed");
+        },
+      }
+    );
   };
 
   return (
