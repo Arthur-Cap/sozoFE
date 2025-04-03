@@ -2,7 +2,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const axiosInstance = axios.create({
-  baseURL: "https://14.225.253.196:8443",
+  baseURL: "https://sozo3d.pro.vn",
 });
 
 axiosInstance.interceptors.request.use(
