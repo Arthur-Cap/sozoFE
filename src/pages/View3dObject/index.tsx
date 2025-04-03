@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-const OBJ_URL = 'http://localhost:5173/src/assets/quadiacau.obj';
+const OBJ_URL = '/assets/quadiacau.obj';
 
 const View3dObject: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);

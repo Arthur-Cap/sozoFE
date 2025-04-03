@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import "./TopBar.css";
-import logo from ".../../../assets/image-removebg (1).png";
-import mockAvt from "../../../assets/mockAvt.png";
 
 const messages = [
   "Welcome to Sozo",
@@ -62,7 +60,7 @@ const TopBar: React.FC = () => {
       style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
     >
       <img
-        src={logo}
+        src="/assets/image-removebg (1).png"
         alt="icon"
         className="h-7 sm:mr-3"
       />
@@ -81,7 +79,7 @@ const TopBar: React.FC = () => {
           className="focus:outline-none"
         >
           <img
-            src={mockAvt}
+            src="/assets/mockAvt.png"
             alt="avatar"
             className="h-7 w-7 rounded-full"
           />

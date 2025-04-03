@@ -10,7 +10,7 @@
 }
 
 .auth-logo {
-  background-image: url("../../../src/assets/image-removebg.png");
+  background-image: url("../../../public/assets/image-removebg.png");
   width: 80px;
   height: 50px;
   background-position: center;

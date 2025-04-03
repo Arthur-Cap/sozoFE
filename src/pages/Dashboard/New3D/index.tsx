@@ -30,7 +30,7 @@ const New3D: React.FC = () => {
           />
           <img
             className="absolute w-[30px]"
-            src="src\assets\scanning.png"
+            src="\assets\scanning.png"
             alt="Sample GIF"
           />
         </div>
