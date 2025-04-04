@@ -75,7 +75,7 @@ const WorkingTask: React.FC = () => {
 
   return (
     <div
-      className="working-task relative min-h-[266px] text-white flex items-center justify-between p-[3%] overflow-hidden rounded-lg h-full bg-white shadow-lg"
+      className="working-task relative min-h-[266px] border-white border-2 text-white flex items-center justify-between p-[3%] overflow-hidden rounded-lg h-full bg-white  shadow-[0_0_20px_rgba(0,0,0,0.3)] "
       style={{
         backgroundImage: `linear-gradient(90deg,rgb(0, 0, 0), rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), url(${task?.displayImg})`,
       }}
