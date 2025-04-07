@@ -1,6 +1,4 @@
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-
 const axiosInstance = axios.create({
   baseURL: "https://sozo3d.pro.vn",
 });
@@ -43,8 +41,7 @@ axiosInstance.interceptors.response.use(
       } catch (refreshError) {
         localStorage.removeItem("authToken");
         localStorage.removeItem("refreshToken");
-        const navigate = useNavigate();
-        navigate("/auth/login");
+        window.location.href = "/auth/login";
       }
     }
     return Promise.reject(error);
