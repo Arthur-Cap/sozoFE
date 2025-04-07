@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./WorkingTask.css";
 import { Images, ClockArrowUp } from "lucide-react";
 import useWebSocket from "../../../connection/socket/useWebSocket";
-
+import { useTopBar } from "../../../contexts/TopBarContext";
 export interface Task {
   createdAt: number;
   updatedAt: number;
@@ -32,7 +32,10 @@ const WorkingTask: React.FC = () => {
   const token = localStorage.getItem("authToken");
   const socketUrl = token ? `wss://sozo3d.pro.vn/ws/task?token=${token}` : "";
 
-  const { lastMessage } = useWebSocket(socketUrl, undefined, { autoReconnect: true, reconnectInterval: 3000 });
+  const { lastMessage } = useWebSocket(socketUrl, undefined, {
+    autoReconnect: true,
+    reconnectInterval: 3000,
+  });
 
   useEffect(() => {
     if (lastMessage) {
@@ -57,8 +60,16 @@ const WorkingTask: React.FC = () => {
     return () => clearInterval(timer);
   }, [task]);
 
+  const { setTopBarState } = useTopBar();
   return (
     <div
+      onClick={() =>  
+        setTopBarState({
+          backgroundImage: "https://firebasestorage.googleapis.com/v0/b/sozo-a7e8e.firebasestorage.app/o/image%2Fa5519c89-b44b-4257-84e3-8aa4c71c2e36?alt=media",
+          backgroundColor: "#0060dc",
+          title: "Task của bạn đã hoàn thành",
+        })
+      }
       className="working-task relative min-h-[266px] border-white border-2 text-white flex items-center justify-between p-[3%] overflow-hidden rounded-lg h-full bg-white shadow-[0_0_20px_rgba(0,0,0,0.3)]"
       style={{
         backgroundImage: `linear-gradient(90deg, rgb(0, 0, 0), rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), url(${task?.displayImg})`,
@@ -80,7 +91,9 @@ const WorkingTask: React.FC = () => {
 
         <div className="info mt-[7px] md:mt-[15px] lg:mt-[15px]">
           <div className="create-info flex flex-col">
-            <p className="text-[9px] md:text-[11px] lg:text-[12px] font-bold">From</p>
+            <p className="text-[9px] md:text-[11px] lg:text-[12px] font-bold">
+              From
+            </p>
             <div>
               <p className="text-[8px] md:text-[10px] lg:text-[11px] text-white/70">
                 {task?.userName || ""}
@@ -94,11 +107,11 @@ const WorkingTask: React.FC = () => {
 
         <div className="info mt-[3px] md:mt-[7px] lg:mt-[10px]">
           <div className="create-info flex max-w-[300px] flex-col">
-            <p className="text-lg md:text-xl lg:text-2xl font-bold px-[8%] relative left-[-8%] py-2 bg-green-100/50 text-white overflow-hidden relative">
+            <div className="text-lg md:text-xl lg:text-2xl font-bold px-[8%] relative left-[-8%] py-2 bg-green-100/50 text-white overflow-hidden relative">
               <span className="relative z-10">{task?.taskName || "??"}</span>
               <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,_rgba(255,255,255,0.3)_0,_rgba(255,255,255,0.3)_1px,_transparent_1px,_transparent_4px)] opacity-40" />
               <div className="absolute top-0 right-0 w-[3px] h-full bg-green-400 shadow-[5px_0_25px_8px_rgba(34,197,94,0.6)] z-10" />
-            </p>
+            </div>
           </div>
 
           <div>

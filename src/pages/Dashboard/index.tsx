@@ -4,13 +4,11 @@ import { useNavigate } from "react-router-dom";
 import WorkingTask from "./WorkingTask";
 import TaskHistory from "./TaskHistory";
 import DashboardOption from "./DashboardOption";
-import TopBar from "./TopBar";
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   return (
     <div>
-      <TopBar></TopBar>
       <div className="dashboard justify-center w-full items-center h-screen pt-[50px]">
         <WorkingTask></WorkingTask>
         <TaskHistory />
