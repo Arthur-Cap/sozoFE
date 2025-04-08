@@ -7,7 +7,7 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <div>
+      <div className='lg:h-full'>
         <AppRoutes />
       </div>
     </QueryClientProvider>

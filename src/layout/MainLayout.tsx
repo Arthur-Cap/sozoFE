@@ -1,15 +1,14 @@
 import { Outlet } from "react-router-dom";
 import TopBar from "../pages/Dashboard/TopBar";
 import { TopBarProvider, useTopBar } from "../contexts/TopBarContext";
-import { useEffect } from "react";
 
 const MainLayout = () => {
    
   return (
     <TopBarProvider>
-      <div>
+      <div className="h-full">
         <TopBar></TopBar>
-        <main>
+        <main className="h-full">
           <Outlet />
         </main>
       </div>

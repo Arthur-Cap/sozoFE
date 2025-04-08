@@ -13,8 +13,8 @@ const Dashboard: React.FC = () => {
   const shouldShowImageBg = theme === "glass";
 
   return (
-    <div className={`dashboard-wrapper ${shouldShowImageBg ? "with-bg" : `theme-${theme}`}`}>
-      <div className="dashboard justify-center w-full items-center h-screen pt-[50px]">
+    <div className={`dashboard-wrapper flex items-center overflow-hidden ${shouldShowImageBg ? "with-bg" : `theme-${theme}`}`}>
+      <div className="dashboard justify-center w-full items-center pt-[50px]">
         <WorkingTask />
         <TaskHistory />
         <DashboardOption
