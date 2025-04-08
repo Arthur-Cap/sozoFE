@@ -1,4 +1,6 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+
+export type ThemeType = "light" | "dark" | "white" | "forest" | "glass";
 
 interface TopBarState {
   backgroundColor?: string;
@@ -7,17 +9,40 @@ interface TopBarState {
 }
 
 interface TopBarContextType {
-  state: TopBarState;
+  topBarState: TopBarState;
   setTopBarState: (state: TopBarState) => void;
+  theme: ThemeType;
+  setTheme: (theme: ThemeType) => void;
 }
 
 const TopBarContext = createContext<TopBarContextType | undefined>(undefined);
 
 export const TopBarProvider = ({ children }: { children: ReactNode }) => {
-  const [state, setState] = useState<TopBarState>({});
+  const [topBarState, setTopBarState] = useState<TopBarState>({});
+
+  const [theme, setThemeState] = useState<ThemeType>("glass");
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") as ThemeType | null;
+    if (savedTheme) {
+      setThemeState(savedTheme);
+    }
+  }, []);
+
+  const setTheme = (newTheme: ThemeType) => {
+    localStorage.setItem("theme", newTheme);
+    setThemeState(newTheme);
+  };
 
   return (
-    <TopBarContext.Provider value={{ state, setTopBarState: setState }}>
+    <TopBarContext.Provider
+      value={{
+        topBarState,
+        setTopBarState,
+        theme,
+        setTheme,
+      }}
+    >
       {children}
     </TopBarContext.Provider>
   );

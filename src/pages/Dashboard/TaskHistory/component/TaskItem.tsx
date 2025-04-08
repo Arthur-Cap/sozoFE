@@ -1,5 +1,6 @@
 import React from "react";
 import { ChevronRight } from "lucide-react";
+import { useTopBar } from "../../../../contexts/TopBarContext";
 
 interface TaskItemProps {
   title: string;
@@ -9,6 +10,13 @@ interface TaskItemProps {
 }
 
 const TaskItem: React.FC<TaskItemProps> = ({ title, date, image, onClick }) => {
+  const { theme } = useTopBar();
+  const isLight = theme === "light" || theme === "white";
+
+  const titleClass = isLight ? "text-black" : "text-white";
+  const dateClass = isLight ? "text-black/60" : "text-white/70";
+  const iconClass = isLight ? "text-black/80" : "text-white/80";
+
   return (
     <div
       className="flex justify-between items-center cursor-pointer"
@@ -20,17 +28,11 @@ const TaskItem: React.FC<TaskItemProps> = ({ title, date, image, onClick }) => {
 
       <div className="flex items-center flex-1 pl-[10px]">
         <div className="task-item flex flex-col">
-          <p className="text-[9px] md:text-[11px] lg:text-[12px] text-black/80">
-            {title}
-          </p>
-          <div>
-            <p className="text-[8px] md:text-[10px] lg:text-[11px] font-normal text-black/60">
-              {date}
-            </p>
-          </div>
+          <p className={`text-[11px] ${titleClass}`}>{title}</p>
+          <p className={`text-[10px] ${dateClass}`}>{date}</p>
         </div>
       </div>
-      <ChevronRight className="w-4 text-black/80" />
+      <ChevronRight className={`w-4 ${iconClass}`} />
     </div>
   );
 };

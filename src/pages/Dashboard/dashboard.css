@@ -1,3 +1,44 @@
+.dashboard-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.dashboard-wrapper.with-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: url("/assets/forest.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.dashboard-wrapper.theme-light {
+  background: linear-gradient(to bottom, #fff0df, #fff8f4);
+}
+
+.dashboard-wrapper.theme-dark {
+  background: #1a1a1a;
+}
+
+.dashboard-wrapper.theme-blur {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.dashboard-wrapper.theme-forest {
+  background: rgba(34, 49, 35, 0.6);
+}
+
+.dashboard-wrapper.theme-glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
 .dashboard {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -5,15 +46,14 @@
   grid-template-areas:
     "working-task working-task working-task task-history"
     "create-new-task service-info guide get-help";
-  gap: 15px; 
+  gap: 15px;
   padding: 100px 120px;
-  background: linear-gradient(to bottom, #fff0df, #fff8f4);
+  z-index: 1;
 }
-
 
 @media (max-width: 1100px) {
   .dashboard {
-    padding : 150px 30px;
+    padding: 150px 30px;
   }
 }
 
@@ -32,7 +72,6 @@
       "task-history task-history"
       "get-help guide";
   }
-  
 }
 
 .working-task {
@@ -58,4 +97,3 @@
 .get-help {
   grid-area: get-help;
 }
-

@@ -67,7 +67,7 @@ const WorkingTask: React.FC = () => {
         setTopBarState({
           backgroundImage: "https://firebasestorage.googleapis.com/v0/b/sozo-a7e8e.firebasestorage.app/o/image%2Fa5519c89-b44b-4257-84e3-8aa4c71c2e36?alt=media",
           backgroundColor: "#0060dc",
-          title: "Task của bạn đã hoàn thành",
+          title: "Your task has been completed",
         })
       }
       className="working-task relative min-h-[266px] border-white border-2 text-white flex items-center justify-between p-[3%] overflow-hidden rounded-lg h-full bg-white shadow-[0_0_20px_rgba(0,0,0,0.3)]"
