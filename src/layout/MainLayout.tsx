@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import TopBar from "../pages/Dashboard/TopBar";
-import { TopBarProvider, useTopBar } from "../contexts/TopBarContext";
+import { TopBarProvider } from "../contexts/TopBarContext";
 
 const MainLayout = () => {
    
