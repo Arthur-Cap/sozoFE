@@ -11,6 +11,7 @@ import View3dObject from "../pages/View3dObject";
 import ProtectedRoute from "./ProtectedRoute";
 import PublicRoute from "./PublicRoute";
 import MainLayoot from "../layout/MainLayout";
+import TaskListPage from "../pages/TaskHistory";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -45,6 +46,7 @@ const AppRoutes: React.FC = () => {
         >
           <Route index element={<Dashboard />} />
           <Route path="dashboard" element={<Dashboard />} />
+          <Route path="task-history" element={<TaskListPage />} />
           <Route path="camera" element={<CameraAcess />} />
           <Route path="view-3d/:id" element={<View3dObject />} />
         </Route>
