@@ -14,6 +14,7 @@ interface Task {
   taskStatus: string;
   processTime: number;
   displayImg: string | null;
+  resultLink?: string | null;
 }
 
 interface TaskListResponse {
@@ -74,4 +75,18 @@ export const useTaskGenerate = () => {
       },
     }
   );
+};
+
+
+const fetchTaskById = async (id: string): Promise<Task> => {
+  const response = await axiosInstance.get(`/task/generate/3D/${id}`);
+  return response.data;
+};
+
+export const useTaskById = (id: string | undefined) => {
+  return useQuery<Task, AxiosError>({
+    queryKey: ["task", id],
+    queryFn: () => fetchTaskById(id!),
+    enabled: !!id,
+  });
 };
